@@ -60,6 +60,7 @@ bool YamahaAbcAnalyzerSettings::SetSettingsFromInterfaces() {
     AddChannel(mKC1Channel, "Yamaha ABC Keycodes", true);
     AddChannel(mKC2Channel, "Yamaha ABC Keycodes", true);
     AddChannel(mKC3Channel, "Yamaha ABC Keycodes", true);
+    AddChannel(mKC4Channel, "Yamaha ABC Keycodes", true);
     AddChannel(mClockChannel, "Yamaha ABC Keycodes", true);
 
     return true;
