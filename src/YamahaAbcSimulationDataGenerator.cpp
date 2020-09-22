@@ -3,65 +3,82 @@
 
 #include <AnalyzerHelpers.h>
 
-YamahaAbcSimulationDataGenerator::YamahaAbcSimulationDataGenerator()
-        : mSerialText("My first analyzer, woo hoo!"),
-          mStringIndex(0) {
+YamahaAbcSimulationDataGenerator::YamahaAbcSimulationDataGenerator() {
 }
 
-YamahaAbcSimulationDataGenerator::~YamahaAbcSimulationDataGenerator() {
-}
+YamahaAbcSimulationDataGenerator::~YamahaAbcSimulationDataGenerator() = default;
 
 void YamahaAbcSimulationDataGenerator::Initialize(U32 simulation_sample_rate, YamahaAbcAnalyzerSettings *settings) {
     mSimulationSampleRateHz = simulation_sample_rate;
     mSettings = settings;
 
-    mSerialSimulationData.SetChannel(mSettings->mKC1Channel);
-    mSerialSimulationData.SetSampleRate(simulation_sample_rate);
-    mSerialSimulationData.SetInitialBitState(BIT_HIGH);
+    mClockGenerator.Init(470 * 1000, simulation_sample_rate); // 470 kHz
+
+    if (settings->mKC1Channel != UNDEFINED_CHANNEL) {
+        mKC1Simulation = mSimChannels.Add(settings->mKC1Channel, simulation_sample_rate, BIT_LOW);
+    } else {
+        mKC1Simulation = nullptr;
+    }
+
+    if (settings->mKC2Channel != UNDEFINED_CHANNEL) {
+        mKC2Simulation = mSimChannels.Add(settings->mKC2Channel, simulation_sample_rate, BIT_LOW);
+    } else {
+        mKC2Simulation = nullptr;
+    }
+
+    if (settings->mKC3Channel != UNDEFINED_CHANNEL) {
+        mKC3Simulation = mSimChannels.Add(settings->mKC3Channel, simulation_sample_rate, BIT_LOW);
+    } else {
+        mKC3Simulation = nullptr;
+    }
+
+    if (settings->mKC4Channel != UNDEFINED_CHANNEL) {
+        mKC4Simulation = mSimChannels.Add(settings->mKC4Channel, simulation_sample_rate, BIT_LOW);
+    } else {
+        mKC4Simulation = nullptr;
+    }
+
+    if (settings->mClockChannel != UNDEFINED_CHANNEL) {
+        mClockSimulation = mSimChannels.Add(settings->mClockChannel, simulation_sample_rate, BIT_LOW);
+    } else {
+        mClockSimulation = nullptr;
+    }
 }
 
 U32 YamahaAbcSimulationDataGenerator::GenerateSimulationData(U64 largest_sample_requested, U32 sample_rate,
                                                              SimulationChannelDescriptor **simulation_channel) {
-    U64 adjusted_largest_sample_requested = AnalyzerHelpers::AdjustSimulationTargetSample(largest_sample_requested,
+    const U64 adjusted_largest_sample_requested = AnalyzerHelpers::AdjustSimulationTargetSample(largest_sample_requested,
                                                                                           sample_rate,
                                                                                           mSimulationSampleRateHz);
-
-    while (mSerialSimulationData.GetCurrentSampleNumber() < adjusted_largest_sample_requested) {
-        CreateSerialByte();
+    if (mClockSimulation->GetCurrentSampleNumber() == 0) {
+        // At beginning, add one cycle of idle.
+        mSimChannels.AdvanceAll(mClockGenerator.AdvanceByHalfPeriod());
     }
 
-    *simulation_channel = &mSerialSimulationData;
-    return 1;
+    while (mClockSimulation->GetCurrentSampleNumber() < adjusted_largest_sample_requested) {
+        CreateKeycodeFrame();
+    }
+
+    *simulation_channel = mSimChannels.GetArray();
+    return mSimChannels.GetCount();
 }
 
-void YamahaAbcSimulationDataGenerator::CreateSerialByte() {
-    U32 samples_per_bit = mSimulationSampleRateHz / 1000;
+#define STEP() mSimChannels.AdvanceAll(mClockGenerator.AdvanceByHalfPeriod())
 
-    U8 byte = mSerialText[mStringIndex];
-    mStringIndex++;
-    if (mStringIndex == mSerialText.size())
-        mStringIndex = 0;
+void YamahaAbcSimulationDataGenerator::CreateKeycodeFrame() {
 
-    //we're currenty high
-    //let's move forward a little
-    mSerialSimulationData.Advance(samples_per_bit * 10);
-
-    mSerialSimulationData.Transition();  //low-going edge for start bit
-    mSerialSimulationData.Advance(samples_per_bit);  //add start bit time
-
-    U8 mask = 0x1 << 7;
-    for (U32 i = 0; i < 8; i++) {
-        if ((byte & mask) != 0)
-            mSerialSimulationData.TransitionIfNeeded(BIT_HIGH);
-        else
-            mSerialSimulationData.TransitionIfNeeded(BIT_LOW);
-
-        mSerialSimulationData.Advance(samples_per_bit);
-        mask = mask >> 1;
-    }
-
-    mSerialSimulationData.TransitionIfNeeded(BIT_HIGH); //we need to end high
-
-    //lets pad the end a bit for the stop bit:
-    mSerialSimulationData.Advance(samples_per_bit);
+    // START OF FRAME:
+    // All bits go high then low for one cycle.
+    mKC1Simulation->TransitionIfNeeded(BIT_HIGH);
+    mKC2Simulation->TransitionIfNeeded(BIT_HIGH);
+    mKC3Simulation->TransitionIfNeeded(BIT_HIGH);
+    mKC4Simulation->TransitionIfNeeded(BIT_HIGH);
+    mClockSimulation->TransitionIfNeeded(BIT_HIGH);
+    STEP();
+    mKC1Simulation->Transition();
+    mKC2Simulation->Transition();
+    mKC3Simulation->Transition();
+    mKC4Simulation->Transition();
+    mClockSimulation->Transition();
+    STEP();
 }

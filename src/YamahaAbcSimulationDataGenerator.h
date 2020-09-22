@@ -3,6 +3,7 @@
 
 #include <SimulationChannelDescriptor.h>
 #include <string>
+#include <AnalyzerHelpers.h>
 
 class YamahaAbcAnalyzerSettings;
 
@@ -11,6 +12,7 @@ public:
     YamahaAbcSimulationDataGenerator();
 
     ~YamahaAbcSimulationDataGenerator();
+
 
     void Initialize(U32 simulation_sample_rate, YamahaAbcAnalyzerSettings *settings);
 
@@ -22,12 +24,16 @@ protected:
     U32 mSimulationSampleRateHz;
 
 protected:
-    void CreateSerialByte();
+    ClockGenerator mClockGenerator;
 
-    std::string mSerialText;
-    U32 mStringIndex;
+    void CreateKeycodeFrame();
 
-    SimulationChannelDescriptor mSerialSimulationData;
+    SimulationChannelDescriptorGroup mSimChannels;
+    SimulationChannelDescriptor* mKC1Simulation;
+    SimulationChannelDescriptor* mKC2Simulation;
+    SimulationChannelDescriptor* mKC3Simulation;
+    SimulationChannelDescriptor* mKC4Simulation;
+    SimulationChannelDescriptor* mClockSimulation;
 
 };
 
