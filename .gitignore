@@ -1,5 +1,4 @@
-Debug/
-Release/
+cmake-build-debug/
 Debug-Legacy-1.1.14/
 *.VC.db
 *.VC.opendb
