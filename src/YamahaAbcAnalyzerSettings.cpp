@@ -83,6 +83,7 @@ void YamahaAbcAnalyzerSettings::LoadSettings(const char *settings) {
     AddChannel(mKC4Channel, "Yamaha ABC Keycodes", true);
     AddChannel(mClockChannel, "Yamaha ABC Keycodes", true);
 
+    // Update Interfaces From Settings
     mKC1ChannelInterface->SetChannel(mKC1Channel);
     mKC2ChannelInterface->SetChannel(mKC2Channel);
     mKC3ChannelInterface->SetChannel(mKC3Channel);
