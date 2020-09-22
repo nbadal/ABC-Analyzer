@@ -15,7 +15,7 @@ void YamahaAbcSimulationDataGenerator::Initialize(U32 simulation_sample_rate, Ya
     mSimulationSampleRateHz = simulation_sample_rate;
     mSettings = settings;
 
-    mSerialSimulationData.SetChannel(mSettings->mInputChannel);
+    mSerialSimulationData.SetChannel(mSettings->mKC1Channel);
     mSerialSimulationData.SetSampleRate(simulation_sample_rate);
     mSerialSimulationData.SetInitialBitState(BIT_HIGH);
 }
@@ -35,7 +35,7 @@ U32 YamahaAbcSimulationDataGenerator::GenerateSimulationData(U64 largest_sample_
 }
 
 void YamahaAbcSimulationDataGenerator::CreateSerialByte() {
-    U32 samples_per_bit = mSimulationSampleRateHz / mSettings->mBitRate;
+    U32 samples_per_bit = mSimulationSampleRateHz / 1000;
 
     U8 byte = mSerialText[mStringIndex];
     mStringIndex++;

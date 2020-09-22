@@ -10,21 +10,25 @@ public:
 
     ~YamahaAbcAnalyzerSettings() override;
 
-    bool SetSettingsFromInterfaces() override;
 
-    void UpdateInterfacesFromSettings();
+    bool SetSettingsFromInterfaces() override;
 
     void LoadSettings(const char *settings) override;
 
     const char *SaveSettings() override;
 
-
-    Channel mInputChannel;
-    U32 mBitRate;
+    Channel mKC1Channel;
+    Channel mKC2Channel;
+    Channel mKC3Channel;
+    Channel mKC4Channel;
+    Channel mClockChannel;
 
 protected:
-    std::unique_ptr<AnalyzerSettingInterfaceChannel> mInputChannelInterface;
-    std::unique_ptr<AnalyzerSettingInterfaceInteger> mBitRateInterface;
+    std::unique_ptr<AnalyzerSettingInterfaceChannel> mKC1ChannelInterface;
+    std::unique_ptr<AnalyzerSettingInterfaceChannel> mKC2ChannelInterface;
+    std::unique_ptr<AnalyzerSettingInterfaceChannel> mKC3ChannelInterface;
+    std::unique_ptr<AnalyzerSettingInterfaceChannel> mKC4ChannelInterface;
+    std::unique_ptr<AnalyzerSettingInterfaceChannel> mClockChannelInterface;
 };
 
 #endif //YAMAHAABC_ANALYZER_SETTINGS
