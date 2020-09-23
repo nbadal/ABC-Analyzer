@@ -20,8 +20,8 @@ add_library(${PROJECT_NAME} SHARED
         )
 target_link_libraries(${PROJECT_NAME} Analyzer)
 
-# Logic 2.x fix:
+# Logic 2.x fix + install:
 add_custom_command(TARGET ${PROJECT_NAME}
-        POST_BUILD COMMAND
-        ${CMAKE_INSTALL_NAME_TOOL} -change @executable_path/libAnalyzer.dylib @rpath/libAnalyzer.dylib
-        $<TARGET_FILE:${PROJECT_NAME}>)
+        POST_BUILD
+        COMMAND ${CMAKE_INSTALL_NAME_TOOL} -change @executable_path/libAnalyzer.dylib @rpath/libAnalyzer.dylib $<TARGET_FILE:${PROJECT_NAME}>
+        COMMAND cp $<TARGET_FILE:${PROJECT_NAME}> /Users/nbadal/logic-analyzers/)

@@ -30,7 +30,7 @@ protected:
     std::unique_ptr<AnalyzerSettingInterfaceChannel> mKC4ChannelInterface;
     std::unique_ptr<AnalyzerSettingInterfaceChannel> mClockChannelInterface;
 
-    void AddAllChannels();
+    void AddAllChannels(bool isUsed);
 };
 
 #endif //YAMAHAABC_ANALYZER_SETTINGS

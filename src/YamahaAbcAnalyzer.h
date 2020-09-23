@@ -28,13 +28,13 @@ public:
 
     bool NeedsRerun() override;
 
-protected: //vars
+protected:
     std::unique_ptr<YamahaAbcAnalyzerSettings> mSettings;
     std::unique_ptr<YamahaAbcAnalyzerResults> mResults;
     AnalyzerChannelData *mSerial;
 
     YamahaAbcSimulationDataGenerator mSimulationDataGenerator;
-    bool mSimulationInitilized;
+    bool mSimulationInitialized;
 
     //Serial analysis vars:
     U32 mSampleRateHz;

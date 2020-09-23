@@ -39,12 +39,7 @@ YamahaAbcAnalyzerSettings::YamahaAbcAnalyzerSettings() : mKC1Channel(UNDEFINED_C
     AddExportExtension(0, "text", "txt");
     AddExportExtension(0, "csv", "csv");
 
-    ClearChannels();
-    AddChannel(mKC1Channel, "KC1", false);
-    AddChannel(mKC2Channel, "KC2", false);
-    AddChannel(mKC3Channel, "KC3", false);
-    AddChannel(mKC4Channel, "KC4", false);
-    AddChannel(mClockChannel, "Clock", false);
+    AddAllChannels(false);
 }
 
 YamahaAbcAnalyzerSettings::~YamahaAbcAnalyzerSettings() = default;
@@ -56,7 +51,7 @@ bool YamahaAbcAnalyzerSettings::SetSettingsFromInterfaces() {
     mKC4Channel = mKC4ChannelInterface->GetChannel();
     mClockChannel = mClockChannelInterface->GetChannel();
 
-    AddAllChannels();
+    AddAllChannels(true);
 
     return true;
 }
@@ -71,7 +66,7 @@ void YamahaAbcAnalyzerSettings::LoadSettings(const char *settings) {
     text_archive >> mKC4Channel;
     text_archive >> mClockChannel;
 
-    AddAllChannels();
+    AddAllChannels(true);
 
     // Update Interfaces From Settings
     mKC1ChannelInterface->SetChannel(mKC1Channel);
@@ -81,13 +76,13 @@ void YamahaAbcAnalyzerSettings::LoadSettings(const char *settings) {
     mClockChannelInterface->SetChannel(mClockChannel);
 }
 
-void YamahaAbcAnalyzerSettings::AddAllChannels() {
+void YamahaAbcAnalyzerSettings::AddAllChannels(bool isUsed) {
     ClearChannels();
-    AddChannel(mKC1Channel, "Yamaha KC1", true);
-    AddChannel(mKC2Channel, "Yamaha KC2", true);
-    AddChannel(mKC3Channel, "Yamaha KC3", true);
-    AddChannel(mKC4Channel, "Yamaha KC4", true);
-    AddChannel(mClockChannel, "Yamaha Clock", true);
+    AddChannel(mKC1Channel, "YamahaKC1", isUsed);
+    AddChannel(mKC2Channel, "YamahaKC2", isUsed);
+    AddChannel(mKC3Channel, "YamahaKC3", isUsed);
+    AddChannel(mKC4Channel, "YamahaKC4", isUsed);
+    AddChannel(mClockChannel, "YamahaClock", isUsed);
 }
 
 const char *YamahaAbcAnalyzerSettings::SaveSettings() {

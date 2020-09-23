@@ -6,8 +6,8 @@
 
 YamahaAbcAnalyzer::YamahaAbcAnalyzer()
         : Analyzer2(),
-          mSettings(new YamahaAbcAnalyzerSettings()),
-          mSimulationInitilized(false) {
+          mSimulationInitialized(false) {
+    mSettings = std::make_unique<YamahaAbcAnalyzerSettings>();
     SetAnalyzerSettings(mSettings.get());
 }
 
@@ -74,9 +74,9 @@ bool YamahaAbcAnalyzer::NeedsRerun() {
 
 U32 YamahaAbcAnalyzer::GenerateSimulationData(U64 minimum_sample_index, U32 device_sample_rate,
                                               SimulationChannelDescriptor **simulation_channels) {
-    if (!mSimulationInitilized) {
+    if (!mSimulationInitialized) {
         mSimulationDataGenerator.Initialize(GetSimulationSampleRate(), mSettings.get());
-        mSimulationInitilized = true;
+        mSimulationInitialized = true;
     }
 
     return mSimulationDataGenerator.GenerateSimulationData(minimum_sample_index, device_sample_rate,
