@@ -29,6 +29,8 @@ protected: //functions
 protected:  //vars
     YamahaAbcAnalyzerSettings *mSettings;
     YamahaAbcAnalyzer *mAnalyzer;
+
+    std::stringstream FormatResult(const Frame &frame) const;
 };
 
 #endif //YAMAHAABC_ANALYZER_RESULTS

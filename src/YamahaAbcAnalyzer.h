@@ -9,6 +9,10 @@ class YamahaAbcAnalyzerSettings;
 
 class ANALYZER_EXPORT YamahaAbcAnalyzer : public Analyzer2 {
 public:
+
+    static const U8 FLAG_LAST_IN_PACKET = 1;
+    static const U8 FLAG_COMBINED_FRAMES = 2;
+
     YamahaAbcAnalyzer();
 
     ~YamahaAbcAnalyzer() override;
@@ -31,7 +35,15 @@ public:
 protected:
     std::unique_ptr<YamahaAbcAnalyzerSettings> mSettings;
     std::unique_ptr<YamahaAbcAnalyzerResults> mResults;
-    AnalyzerChannelData *mSerial;
+
+    U64 last_value1 = -1;
+    U64 last_value2 = -1;
+
+    AnalyzerChannelData *mKC1Data;
+    AnalyzerChannelData *mKC2Data;
+    AnalyzerChannelData *mKC3Data;
+    AnalyzerChannelData *mKC4Data;
+    AnalyzerChannelData *mClockData;
 
     YamahaAbcSimulationDataGenerator mSimulationDataGenerator;
     bool mSimulationInitialized;
@@ -40,6 +52,12 @@ protected:
     U32 mSampleRateHz;
     U32 mStartOfStopBitOffset;
     U32 mEndOfStopBitOffset;
+
+    void AdvanceToNextClock();
+
+    U8 GetKC();
+
+    bool IsAtStartMarker();
 };
 
 extern "C" ANALYZER_EXPORT const char *__cdecl GetAnalyzerName();
